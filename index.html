@@ -33,7 +33,7 @@
 </head>
 <body>
     <h1>田代砲 改</h1>
-    <label for="url">テストするURL:</label>
+    <label for="url">対象URL</label>
     <input type="text" id="url" placeholder="example.com">
     
     <button id="startTest">発射</button>
@@ -120,7 +120,7 @@
             document.getElementById('stopTest').disabled = true; 
 
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML += '<p>テストが停止しました。</p>'; 
+            resultsDiv.innerHTML += '<p>攻撃が停止しました。</p>'; 
         });
     </script>
     <p>作ったばっかなのでバグがあったらすみません</p>
