@@ -109,18 +109,18 @@
                 .catch(err => {
                     console.error('Error:', err);
                 });
-            }, 33); // --- ここを修正 --- 100ミリ秒から33ミリ秒に変更
+            }, 10); // ★★★ この値を33から10に変更しました ★★★
         });
 
         document.getElementById('stopTest').addEventListener('click', function() {
-            clearInterval(intervalId); // インターバルをクリア
+            clearInterval(intervalId); 
             isRunning = false;
 
-            document.getElementById('startTest').disabled = false; // 発射ボタンを再有効化
-            document.getElementById('stopTest').disabled = true; // 停止ボタンを無効化
+            document.getElementById('startTest').disabled = false;
+            document.getElementById('stopTest').disabled = true; 
 
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML += '<p>テストが停止しました。</p>'; // 停止メッセージを表示
+            resultsDiv.innerHTML += '<p>テストが停止しました。</p>'; 
         });
     </script>
     <p>作ったばっかなのでバグがあったらすみません</p>
